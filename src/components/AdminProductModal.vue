@@ -36,6 +36,7 @@
                   <label for="image">輸入圖片網址</label>
                   <input
                     id="image"
+                    v-model.trim="tempProduct.imageUrl"
                     type="text"
                     class="form-control"
                     placeholder="請輸入圖片連結"
@@ -55,7 +56,8 @@
                 <img
                   img="https://images.unsplash.com/photo-1483985988355-763728e1935b?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=828346ed697837ce808cae68d3ddc3cf&auto=format&fit=crop&w=1350&q=80"
                   class="img-fluid"
-                  alt=""
+                  :src="tempProduct.imageUrl"
+                  :alt="tempProduct.title"
                 >
               </div>
               <div class="col-sm-8">
@@ -63,6 +65,7 @@
                   <label for="title">標題</label>
                   <input
                     id="title"
+                    v-model.trim="tempProduct.title"
                     type="text"
                     class="form-control"
                     placeholder="請輸入標題"
@@ -74,6 +77,7 @@
                     <label for="category">分類</label>
                     <input
                       id="category"
+                      v-model.trim="tempProduct.category"
                       type="text"
                       class="form-control"
                       placeholder="請輸入分類"
@@ -83,6 +87,7 @@
                     <label for="price">單位</label>
                     <input
                       id="unit"
+                      v-model.trim="tempProduct.unit"
                       type="unit"
                       class="form-control"
                       placeholder="請輸入單位"
@@ -95,7 +100,9 @@
                     <label for="origin_price">原價</label>
                     <input
                       id="origin_price"
+                      v-model.number="tempProduct.origin_price"
                       type="number"
+                      min="0"
                       class="form-control"
                       placeholder="請輸入原價"
                     >
@@ -104,7 +111,9 @@
                     <label for="price">售價</label>
                     <input
                       id="price"
+                      v-model.number="tempProduct.price"
                       type="number"
+                      min="0"
                       class="form-control"
                       placeholder="請輸入售價"
                     >
@@ -116,6 +125,7 @@
                   <label for="description">產品描述</label>
                   <textarea
                     id="description"
+                    v-model.trim="tempProduct.description"
                     type="text"
                     class="form-control"
                     placeholder="請輸入產品描述"
@@ -125,6 +135,7 @@
                   <label for="content">說明內容</label>
                   <textarea
                     id="content"
+                    v-model.trim="tempProduct.content"
                     type="text"
                     class="form-control"
                     placeholder="請輸入產品說明內容"
@@ -134,6 +145,9 @@
                   <div class="form-check">
                     <input
                       id="is_enabled"
+                      v-model="tempProduct.is_enabled"
+                      true-value="1"
+                      false-value="0"
                       class="form-check-input"
                       type="checkbox"
                     >
@@ -159,6 +173,7 @@
             <button
               type="button"
               class="btn btn-primary"
+              @click="addProduct"
             >
               確認
             </button>
@@ -170,12 +185,28 @@
 </template>
 
 <script>
+import $ from 'jquery';
+
 export default {
   name: 'AdminProductModal',
   data() {
     return {
-      // newProduct: undefined,
+      tempProduct: {
+        title: '未命名',
+        category: '未分類',
+        origin_price: 0,
+        price: 0,
+      },
     };
+  },
+  methods: {
+    addProduct() {
+      const api = `${process.env.VUE_APP_API_PATH}/api/${process.env.VUE_APP_CUSTOM_PATH}/admin/product`;
+      this.axios.post(api, { data: this.tempProduct }).then(() => {
+        $('#adminProductModal').modal('hide');
+        this.$emit('add-product');
+      });
+    },
   },
 };
 </script>

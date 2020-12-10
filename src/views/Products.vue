@@ -46,12 +46,15 @@
             <button class="btn btn-outline-primary btn-sm">
               編輯
             </button>
+            <button class="btn btn-outline-danger btn-sm">
+              刪除
+            </button>
           </td>
         </tr>
       </tbody>
     </table>
     <!-- Modal -->
-    <AdminProductModal />
+    <AdminProductModal @add-product="getProducts" />
   </div>
 </template>
 
