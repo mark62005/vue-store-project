@@ -1,8 +1,16 @@
 <template>
   <div>
     <div class="text-right mt-4">
-      <button class="btn btn-primary">建立新的產品</button>
+      <button
+        class="btn btn-primary"
+        data-toggle="modal"
+        toggle-target="#adminProductModal"
+        @click="showModal"
+      >
+        建立新的產品
+      </button>
     </div>
+    <!-- Table -->
     <table class="table mt-4">
       <thead>
         <tr>
@@ -42,15 +50,24 @@
         </tr>
       </tbody>
     </table>
+    <!-- Modal -->
+    <AdminProductModal />
   </div>
 </template>
 
 <script>
+import $ from 'jquery';
+import AdminProductModal from '../components/AdminProductModal.vue';
+
 export default {
   name: 'Products',
+  components: {
+    AdminProductModal,
+  },
   data() {
     return {
       products: undefined,
+      newProduct: undefined,
     };
   },
   async created() {
@@ -64,6 +81,10 @@ export default {
       }).catch((res) => {
         console.log(res.data);
       });
+    },
+    showModal() {
+      $('#adminProductModal').modal('show');
+      console.log('click');
     },
   },
 };
