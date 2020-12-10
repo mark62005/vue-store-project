@@ -11,6 +11,8 @@
     "axios": "^0.21.0",
     "bootstrap": "^4.5.3",
     "core-js": "^3.6.5",
+    "jquery": "^3.5.1",
+    "popper.js": "^1.16.1",
     "vue": "^2.6.11",
     "vue-axios": "^3.2.0",
     "vue-router": "^3.2.0"
@@ -44,7 +46,8 @@
     },
     "rules": {
       "no-console": "off",
-      "vue/singleline-html-element-content-newline": "off"
+      "vue/singleline-html-element-content-newline": "off",
+      "vue/html-self-closing": "off"
     }
   },
   "browserslist": [
