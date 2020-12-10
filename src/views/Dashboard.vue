@@ -25,5 +25,9 @@ export default {
     Navbar,
     Sidebar,
   },
+  created() {
+    const myCookie = document.cookie.replace(/(?:(?:^|.*;\s*)myToken\s*=\s*([^;]*).*$)|^.*$/, '$1');
+    this.axios.defaults.headers.common.Authorization = myCookie;
+  },
 };
 </script>
