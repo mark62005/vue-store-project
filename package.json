@@ -43,7 +43,8 @@
       "parser": "babel-eslint"
     },
     "rules": {
-      "no-console": "off"
+      "no-console": "off",
+      "vue/singleline-html-element-content-newline": "off"
     }
   },
   "browserslist": [
