@@ -11,7 +11,7 @@ Vue.use(VueAxios, axios);
 
 new Vue({
   router,
-  created() {
+  async created() {
     const api = `${process.env.VUE_APP_API_PATH}/api/${process.env.VUE_APP_CUSTOM_PATH}/products`;
     this.axios.get(api)
       .then(() => console.log('GET DATA SUCCESS'))
@@ -23,12 +23,8 @@ new Vue({
 router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth) {
     const api = `${process.env.VUE_APP_API_PATH}/api/user/check`;
-    this.axios.post(api).then((res) => {
-      console.log(res.data);
-      next();
-    }).catch((res) => {
-      console.log(res.data);
-      next({ path: '/login' });
-    });
+    axios.post(api)
+      .then(() => next())
+      .catch(() => next({ path: '/login' }));
   } else next();
 });

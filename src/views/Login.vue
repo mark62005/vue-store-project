@@ -68,7 +68,7 @@ export default {
         const { token } = res.data;
         const { expired } = res.data;
         document.cookie = `myToken=${token}; expires=${new Date(expired)};`;
-        this.$router.push({ name: 'Home' });
+        this.$router.push({ path: '/admin/products' });
       });
     },
   },
