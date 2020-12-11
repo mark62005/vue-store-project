@@ -51,6 +51,7 @@
                     ref="files"
                     type="file"
                     class="form-control"
+                    @change="uploadImage"
                   >
                 </div>
                 <img
@@ -215,6 +216,20 @@ export default {
         $('#adminProductModal').modal('hide');
         this.$emit('get-products');
       }).catch((res) => console.log(res.data));
+    },
+    uploadImage() {
+      const api = `${process.env.VUE_APP_API_PATH}/api/${process.env.VUE_APP_CUSTOM_PATH}/admin/upload`;
+      const uploadedImage = this.$refs.files.files[0];
+      const formData = new FormData();
+      formData.append('file-to-upload', uploadedImage);
+      this.axios.post(api, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }).then((res) => {
+        this.$set(this.tempProduct, 'imageUrl', res.data.imageUrl);
+      })
+        .catch(() => console.log('error!!!'));
     },
   },
 };
