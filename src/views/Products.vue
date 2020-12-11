@@ -5,7 +5,7 @@
         class="btn btn-primary"
         data-toggle="modal"
         toggle-target="#adminProductModal"
-        @click="showModal"
+        @click="openModal(true,target)"
       >
         建立新的產品
       </button>
@@ -43,7 +43,10 @@
             <span v-else>未啟用</span>
           </td>
           <td>
-            <button class="btn btn-outline-primary btn-sm">
+            <button
+              class="btn btn-outline-primary btn-sm"
+              @click="openModal(false, product.id)"
+            >
               編輯
             </button>
             <button class="btn btn-outline-danger btn-sm">
@@ -54,7 +57,11 @@
       </tbody>
     </table>
     <!-- Modal -->
-    <AdminProductModal @add-product="getProducts" />
+    <AdminProductModal
+      :temp-product="target"
+      :is-new="isNew"
+      @get-products="getProducts"
+    />
   </div>
 </template>
 
@@ -71,6 +78,8 @@ export default {
     return {
       products: undefined,
       newProduct: undefined,
+      target: {},
+      isNew: false,
     };
   },
   async created() {
@@ -85,9 +94,21 @@ export default {
         console.log(res.data);
       });
     },
-    showModal() {
+    openModal(isNew, id) {
+      const target = this.products.find((item) => item.id === id);
       $('#adminProductModal').modal('show');
-      console.log('click');
+      if (isNew) {
+        this.isNew = true;
+        this.target = {
+          title: '未命名',
+          category: '未分類',
+          origin_price: 0,
+          price: 0,
+        };
+      } else {
+        this.target = { ...target };
+        this.isNew = false;
+      }
     },
   },
 };

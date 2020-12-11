@@ -173,7 +173,7 @@
             <button
               type="button"
               class="btn btn-primary"
-              @click="addProduct"
+              @click="updateProduct"
             >
               確認
             </button>
@@ -189,23 +189,32 @@ import $ from 'jquery';
 
 export default {
   name: 'AdminProductModal',
-  data() {
-    return {
-      tempProduct: {
-        title: '未命名',
-        category: '未分類',
-        origin_price: 0,
-        price: 0,
-      },
-    };
+  props: {
+    tempProduct: {
+      type: Object,
+      required: true,
+    },
+    isNew: {
+      type: Boolean,
+      required: true,
+    },
+  },
+  computed: {
+    api() {
+      if (this.isNew) return `${process.env.VUE_APP_API_PATH}/api/${process.env.VUE_APP_CUSTOM_PATH}/admin/product`;
+      return `${process.env.VUE_APP_API_PATH}/api/${process.env.VUE_APP_CUSTOM_PATH}/admin/product/${this.tempProduct.id}`;
+    },
+    httpMethod() {
+      if (this.isNew) return 'post';
+      return 'put';
+    },
   },
   methods: {
-    addProduct() {
-      const api = `${process.env.VUE_APP_API_PATH}/api/${process.env.VUE_APP_CUSTOM_PATH}/admin/product`;
-      this.axios.post(api, { data: this.tempProduct }).then(() => {
+    updateProduct() {
+      this.axios[this.httpMethod](this.api, { data: this.tempProduct }).then(() => {
         $('#adminProductModal').modal('hide');
-        this.$emit('add-product');
-      });
+        this.$emit('get-products');
+      }).catch((res) => console.log(res.data));
     },
   },
 };
