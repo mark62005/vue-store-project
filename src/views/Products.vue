@@ -62,7 +62,10 @@
         </tr>
       </tbody>
     </table>
-    <!-- Modal -->
+    <Pagination
+      :pagination="pagination"
+      @change-page="getProducts"
+    />
     <AdminProductModal
       :temp-product="target"
       :is-new="isNew"
@@ -79,12 +82,14 @@
 import $ from 'jquery';
 import AdminProductModal from '../components/AdminProductModal.vue';
 import DelProductModal from '../components/DelProductModal.vue';
+import Pagination from '../components/Pagination.vue';
 
 export default {
   name: 'Products',
   components: {
     AdminProductModal,
     DelProductModal,
+    Pagination,
   },
   data() {
     return {
@@ -92,18 +97,20 @@ export default {
       target: {},
       isNew: false,
       isLoading: false,
+      pagination: {},
     };
   },
   async created() {
     this.getProducts();
   },
   methods: {
-    getProducts() {
-      const api = `${process.env.VUE_APP_API_PATH}/api/${process.env.VUE_APP_CUSTOM_PATH}/admin/products`;
+    getProducts(page = 1) {
+      const api = `${process.env.VUE_APP_API_PATH}/api/${process.env.VUE_APP_CUSTOM_PATH}/admin/products?page=${page}`;
       this.isLoading = true;
       this.axios.get(api).then((res) => {
         this.isLoading = false;
         this.products = res.data.products;
+        this.pagination = res.data.pagination;
       }).catch((res) => {
         this.$bus.$emit('message:push', res.data.message, 'danger');
       });
