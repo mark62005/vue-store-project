@@ -5,7 +5,7 @@
         class="btn btn-primary"
         data-toggle="modal"
         toggle-target="#adminProductModal"
-        @click="openModal(true,target)"
+        @click="openUpdateModal(true,target)"
       >
         建立新的產品
       </button>
@@ -45,11 +45,16 @@
           <td>
             <button
               class="btn btn-outline-primary btn-sm"
-              @click="openModal(false, product.id)"
+              @click="openUpdateModal(false, product.id)"
             >
               編輯
             </button>
-            <button class="btn btn-outline-danger btn-sm">
+            <button
+              class="btn btn-outline-danger btn-sm"
+              data-toggle="modal"
+              toggle-target="#delProductModal"
+              @click="openDelModal(product.id)"
+            >
               刪除
             </button>
           </td>
@@ -62,17 +67,23 @@
       :is-new="isNew"
       @get-products="getProducts"
     />
+    <DelProductModal
+      :product="target"
+      @get-products="getProducts"
+    />
   </div>
 </template>
 
 <script>
 import $ from 'jquery';
 import AdminProductModal from '../components/AdminProductModal.vue';
+import DelProductModal from '../components/DelProductModal.vue';
 
 export default {
   name: 'Products',
   components: {
     AdminProductModal,
+    DelProductModal,
   },
   data() {
     return {
@@ -94,7 +105,7 @@ export default {
         console.log(res.data);
       });
     },
-    openModal(isNew, id) {
+    openUpdateModal(isNew, id) {
       const target = this.products.find((item) => item.id === id);
       $('#adminProductModal').modal('show');
       if (isNew) {
@@ -109,6 +120,12 @@ export default {
         this.target = { ...target };
         this.isNew = false;
       }
+    },
+    openDelModal(id) {
+      console.log('del', id);
+      const target = this.products.find((item) => item.id === id);
+      this.target = { ...target };
+      $('#delProductModal').modal('show');
     },
   },
 };
