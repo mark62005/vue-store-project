@@ -18,7 +18,7 @@
               id="adminProductModalLabel"
               class="modal-title"
             >
-              <span>新增產品</span>
+              <span>{{ modalTitle }}產品</span>
             </h5>
             <button
               type="button"
@@ -211,6 +211,10 @@ export default {
     };
   },
   computed: {
+    modalTitle() {
+      if (this.isNew) return '新增';
+      return '編輯';
+    },
     api() {
       if (this.isNew) return `${process.env.VUE_APP_API_PATH}/api/${process.env.VUE_APP_CUSTOM_PATH}/admin/product`;
       return `${process.env.VUE_APP_API_PATH}/api/${process.env.VUE_APP_CUSTOM_PATH}/admin/product/${this.tempProduct.id}`;
