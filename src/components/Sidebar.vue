@@ -55,7 +55,7 @@
         <ul class="nav flex-column mb-2">
           <li class="nav-item">
             <router-link
-              to="/admin/products"
+              to="/customer-orders"
               class="nav-link"
             >
               <i class="fas fa-shopping-cart"></i> 模擬訂單
@@ -66,3 +66,9 @@
     </nav>
   </div>
 </template>
+
+<style lang="scss">
+.sidebar .nav-link.active {
+  color: #6f42c1;
+}
+</style>
