@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Loading :active.sync="isLoading" />
     <div class="text-right mt-4">
       <button
         class="btn btn-primary"
@@ -88,9 +89,9 @@ export default {
   data() {
     return {
       products: undefined,
-      newProduct: undefined,
       target: {},
       isNew: false,
+      isLoading: false,
     };
   },
   async created() {
@@ -99,7 +100,9 @@ export default {
   methods: {
     getProducts() {
       const api = `${process.env.VUE_APP_API_PATH}/api/${process.env.VUE_APP_CUSTOM_PATH}/admin/products`;
+      this.isLoading = true;
       this.axios.get(api).then((res) => {
+        this.isLoading = false;
         this.products = res.data.products;
       }).catch((res) => {
         console.log(res.data);

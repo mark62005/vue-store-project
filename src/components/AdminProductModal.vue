@@ -44,7 +44,10 @@
                 </div>
                 <div class="form-group">
                   <label for="customFile">或 上傳圖片
-                    <i class="fas fa-spinner fa-spin"></i>
+                    <i
+                      v-if="status.isLoading"
+                      class="fas fa-spinner fa-spin"
+                    ></i>
                   </label>
                   <input
                     id="customFile"
@@ -200,6 +203,13 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      status: {
+        isLoading: false,
+      },
+    };
+  },
   computed: {
     api() {
       if (this.isNew) return `${process.env.VUE_APP_API_PATH}/api/${process.env.VUE_APP_CUSTOM_PATH}/admin/product`;
@@ -221,6 +231,7 @@ export default {
       const api = `${process.env.VUE_APP_API_PATH}/api/${process.env.VUE_APP_CUSTOM_PATH}/admin/upload`;
       const uploadedImage = this.$refs.files.files[0];
       const formData = new FormData();
+      this.status.isLoading = true;
       formData.append('file-to-upload', uploadedImage);
       this.axios.post(api, formData, {
         headers: {
@@ -230,6 +241,7 @@ export default {
         this.$set(this.tempProduct, 'imageUrl', res.data.imageUrl);
       })
         .catch(() => console.log('error!!!'));
+      this.status.isLoading = false;
     },
   },
 };
