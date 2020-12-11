@@ -70,10 +70,10 @@ export default {
       const api = `${process.env.VUE_APP_API_PATH}/api/${process.env.VUE_APP_CUSTOM_PATH}/admin/product/${id}`;
       this.axios.delete(api)
         .then((res) => {
-          console.log(res.data.message);
           this.$emit('get-products');
+          this.$bus.$emit('message:push', res.data.message, 'success');
         })
-        .catch((res) => console.log(res.data.message));
+        .catch((res) => this.$bus.$emit('message:push', res.data.message, 'danger'));
       $('#delProductModal').modal('hide');
     },
   },

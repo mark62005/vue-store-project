@@ -105,7 +105,7 @@ export default {
         this.isLoading = false;
         this.products = res.data.products;
       }).catch((res) => {
-        console.log(res.data);
+        this.$bus.$emit('message:push', res.data.message, 'danger');
       });
     },
     openUpdateModal(isNew, id) {

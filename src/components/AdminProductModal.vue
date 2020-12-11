@@ -222,10 +222,11 @@ export default {
   },
   methods: {
     updateProduct() {
-      this.axios[this.httpMethod](this.api, { data: this.tempProduct }).then(() => {
+      this.axios[this.httpMethod](this.api, { data: this.tempProduct }).then((res) => {
         $('#adminProductModal').modal('hide');
         this.$emit('get-products');
-      }).catch((res) => console.log(res.data));
+        this.$bus.$emit('message:push', res.data.message, 'success');
+      }).catch((res) => this.$bus.$emit('message:push', res.data.message, 'danger'));
     },
     uploadImage() {
       const api = `${process.env.VUE_APP_API_PATH}/api/${process.env.VUE_APP_CUSTOM_PATH}/admin/upload`;
@@ -239,8 +240,9 @@ export default {
         },
       }).then((res) => {
         this.$set(this.tempProduct, 'imageUrl', res.data.imageUrl);
+        this.$bus.$emit('message:push', res.data.message, 'success');
       })
-        .catch(() => console.log('error!!!'));
+        .catch((res) => this.$bus.$emit('message:push', res.data.message, 'danger'));
       this.status.isLoading = false;
     },
   },

@@ -64,12 +64,12 @@ export default {
     signIn() {
       const api = `${process.env.VUE_APP_API_PATH}/admin/signin`;
       this.axios.post(api, this.user).then((res) => {
-        console.log(res.data.message);
+        this.$bus.$emit('message:push', res.data.message, 'success');
         const { token } = res.data;
         const { expired } = res.data;
         document.cookie = `myToken=${token}; expires=${new Date(expired)};`;
         this.$router.push({ path: '/admin/products' });
-      });
+      }).catch((res) => this.$bus.$emit('message:push', res.data.message, 'danger'));
     },
   },
 };
