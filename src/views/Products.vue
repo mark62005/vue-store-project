@@ -31,10 +31,10 @@
           <td>{{ product.category }}</td>
           <td>{{ product.title }}</td>
           <td class="text-right">
-            {{ product.origin_price }}
+            {{ product.origin_price | currency }}
           </td>
           <td class="text-right">
-            {{ product.price }}
+            {{ product.price | currency }}
           </td>
           <td>
             <span
