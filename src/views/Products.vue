@@ -20,7 +20,12 @@
           <th width="120">原價</th>
           <th width="120">售價</th>
           <th width="100">是否已啟用</th>
-          <th width="80">編輯</th>
+          <th
+            width="120"
+            class="text-center"
+          >
+            編輯
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -36,14 +41,14 @@
           <td class="text-right">
             {{ product.price | currency }}
           </td>
-          <td>
+          <td class="text-center">
             <span
               v-if="product.is_enabled"
               class="text-success"
             >已啟用</span>
             <span v-else>未啟用</span>
           </td>
-          <td>
+          <td class="d-flex justify-content-between">
             <button
               class="btn btn-outline-primary btn-sm"
               @click="openUpdateModal(false, product.id)"
