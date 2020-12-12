@@ -1,12 +1,13 @@
 <template>
   <div
     class="d-flex flex-wrap flew-md-nowrap justify-content-center align-items-center
-  pb-2 m-3 border-bottom"
+    pb-2 m-3 border-bottom"
   >
     <Loading :active.sync="isLoading" />
     <div class="container d-flex justify-content-between mt-2">
       <h1 class="h2 mb-0">{{ pageTitle }}</h1>
     </div>
+    <!-- table -->
     <table class="table mt-4">
       <thead>
         <th></th>
@@ -85,6 +86,93 @@
         </button>
       </div>
     </div>
+    <!-- user form -->
+    <div class="container my-5 row justify-content-center">
+      <form
+        class="col-md-6"
+        @submit.prevent="createOrder"
+      >
+        <div class="form-group">
+          <label for="useremail">Email</label>
+          <input
+            id="useremail"
+            v-model.trim="form.user.email"
+            v-validate="'required|email'"
+            type="email"
+            class="form-control"
+            :class="{ 'is-invalid': errors.first('email') }"
+            name="email"
+            placeholder="請輸入 Email"
+          >
+          <span
+            v-if="errors.first('email')"
+            class="text-danger"
+          >{{ errors.first('email') }}</span>
+        </div>
+
+        <div class="form-group">
+          <label for="username">收件人姓名</label>
+          <input
+            id="username"
+            v-model.trim="form.user.name"
+            v-validate="'required'"
+            type="text"
+            class="form-control"
+            :class="{ 'is-invalid': errors.first('name') }"
+            name="name"
+            placeholder="輸入姓名"
+          >
+          <span
+            v-if="errors.first('name')"
+            class="text-danger"
+          >此欄位不得留空</span>
+        </div>
+
+        <div class="form-group">
+          <label for="usertel">收件人電話</label>
+          <input
+            id="usertel"
+            v-model="form.user.tel"
+            type="tel"
+            class="form-control"
+            placeholder="請輸入電話"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="useraddress">收件人地址</label>
+          <input
+            id="useraddress"
+            v-model.trim="form.user.address"
+            v-validate="'required'"
+            type="text"
+            class="form-control"
+            :class="{ 'is-invalid': errors.first('address') }"
+            name="address"
+            placeholder="請輸入地址"
+          >
+          <span
+            v-if="errors.first('address')"
+            class="text-danger"
+          >地址欄位不得留空</span>
+        </div>
+
+        <div class="form-group">
+          <label for="comment">留言</label>
+          <textarea
+            id="comment"
+            v-model.trim="form.message"
+            name=""
+            class="form-control"
+            cols="30"
+            rows="10"
+          ></textarea>
+        </div>
+        <div class="text-right">
+          <button class="btn btn-danger">送出訂單</button>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -97,6 +185,15 @@ export default {
       cart: {},
       isLoading: false,
       coupon_code: '',
+      form: {
+        user: {
+          name: '',
+          email: '',
+          tel: '',
+          address: '',
+        },
+        message: '',
+      },
     };
   },
   async created() {
@@ -137,6 +234,26 @@ export default {
         this.isLoading = false;
       }
     },
+    createOrder() {
+      const api = `${process.env.VUE_APP_API_PATH}/api/${process.env.VUE_APP_CUSTOM_PATH}/order`;
+      const order = this.form;
+      this.isLoading = true;
+      this.$validator.validate().then((result) => {
+        if (result) {
+          this.$http.post(api, { data: order }).then((res) => {
+            console.log('訂單已建立', res);
+            this.getCart();
+          });
+        } else this.$bus.$emit('message:push', '欄位不完整', 'danger');
+        this.isLoading = false;
+      });
+    },
   },
 };
 </script>
+
+<style scoped>
+textarea {
+  resize: none;
+}
+</style>
