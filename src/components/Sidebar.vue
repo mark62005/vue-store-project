@@ -58,6 +58,14 @@
               to="/customer-orders"
               class="nav-link"
             >
+              <i class="fas fa-clipboard-list"></i> 模擬訂單
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link
+              to="/carts"
+              class="nav-link"
+            >
               <i class="fas fa-shopping-cart"></i> 模擬訂單
             </router-link>
           </li>
