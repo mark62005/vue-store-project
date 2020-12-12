@@ -1,53 +1,51 @@
 <template>
-  <div>
+  <div
+    id="delCouponModal"
+    class="modal fade"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="delModalLabel"
+    aria-hidden="true"
+  >
     <div
-      id="delCouponModal"
-      class="modal fade"
-      tabindex="-1"
-      role="dialog"
-      aria-labelledby="delModalLabel"
-      aria-hidden="true"
+      class="modal-dialog"
+      role="document"
     >
-      <div
-        class="modal-dialog"
-        role="document"
-      >
-        <div class="modal-content border-0">
-          <div class="modal-header bg-danger text-white">
-            <h5
-              id="delModalLabel"
-              class="modal-title"
-            >
-              <span>刪除產品</span>
-            </h5>
-            <button
-              type="button"
-              class="close text-white"
-              data-dismiss="modal"
-              aria-label="Close"
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            是否刪除 <strong class="text-danger">{{ coupon.title }}</strong> 優惠劵(刪除後將無法恢復)。
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-outline-secondary"
-              data-dismiss="modal"
-            >
-              取消
-            </button>
-            <button
-              type="button"
-              class="btn btn-danger"
-              @click="delCoupon(coupon.id)"
-            >
-              確認刪除
-            </button>
-          </div>
+      <div class="modal-content border-0">
+        <div class="modal-header bg-danger text-white">
+          <h5
+            id="delModalLabel"
+            class="modal-title"
+          >
+            <span>刪除產品</span>
+          </h5>
+          <button
+            type="button"
+            class="close text-white"
+            data-dismiss="modal"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          是否刪除 <strong class="text-danger">{{ coupon.title }}</strong> 優惠劵(刪除後將無法恢復)。
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            data-dismiss="modal"
+          >
+            取消
+          </button>
+          <button
+            type="button"
+            class="btn btn-danger"
+            @click="delCoupon(coupon.id)"
+          >
+            確認刪除
+          </button>
         </div>
       </div>
     </div>

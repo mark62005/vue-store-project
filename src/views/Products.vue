@@ -4,8 +4,8 @@
     pb-2 m-3 border-bottom"
   >
     <Loading :active.sync="isLoading" />
-    <div class="container d-flex justify-content-between align-items-center mt-2">
-      <h1 class="h2">{{ pageTitle }}</h1>
+    <div class="container d-flex justify-content-between mt-2">
+      <h1 class="h2 mb-0">{{ pageTitle }}</h1>
       <div class="btn-toolbar mb-2 mb-md-0">
         <div class="btn-group mr-2">
           <button
@@ -108,7 +108,7 @@ export default {
   data() {
     return {
       pageTitle: '產品列表',
-      products: undefined,
+      products: [],
       target: {},
       isNew: false,
       isLoading: false,
@@ -126,9 +126,7 @@ export default {
         this.isLoading = false;
         this.products = res.data.products;
         this.pagination = res.data.pagination;
-      }).catch((res) => {
-        this.$bus.$emit('message:push', res.data.message, 'danger');
-      });
+      }).catch((res) => this.$bus.$emit('message:push', res.data.message, 'danger'));
     },
     openUpdateModal(isNew, id) {
       const target = this.products.find((item) => item.id === id);
@@ -147,7 +145,6 @@ export default {
       }
     },
     openDelModal(id) {
-      console.log('del', id);
       const target = this.products.find((item) => item.id === id);
       this.target = { ...target };
       $('#delProductModal').modal('show');
