@@ -33,7 +33,13 @@ router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth) {
     const api = `${process.env.VUE_APP_API_PATH}/api/user/check`;
     axios.post(api)
-      .then(() => next())
-      .catch(() => next({ path: '/login' }));
+      .then(() => {
+        // console.log(res.data);
+        next();
+      })
+      .catch((res) => {
+        this.$bus.$emit('message:push', res.data.message, 'danger');
+        next({ path: '/login' });
+      });
   } else next();
 });
