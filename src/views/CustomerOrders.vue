@@ -62,6 +62,7 @@
             <button
               type="button"
               class="btn btn-outline-danger btn-sm ml-auto"
+              @click="addToCart(product.id)"
             >
               <i
                 v-if="product.id === status.loadingItem"
@@ -96,7 +97,7 @@
               id="productModalLabel"
               class="modal-title"
             >
-              {{ product.title }}
+              {{ singleProduct.title }}
             </h5>
             <button
               type="button"
@@ -109,57 +110,63 @@
           </div>
           <div class="modal-body">
             <img
-              :src="product.image"
+              :src="singleProduct.image"
               class="img-fluid"
-              :alt="product.title"
+              :alt="singleProduct.title"
             >
             <blockquote class="blockquote mt-3">
-              <p class="mb-0">{{ product.content }}</p>
-              <footer class="blockquote-footer text-right">{{ product.description }}</footer>
+              <p class="mb-0">{{ singleProduct.content }}</p>
+              <footer class="blockquote-footer text-right">{{ singleProduct.description }}</footer>
             </blockquote>
             <div class="d-flex justify-content-between align-items-baseline">
               <div
-                v-if="!product.price"
+                v-if="!singleProduct.price"
                 class="h4"
               >
-                {{ product.origin_price }} 元
+                {{ singleProduct.origin_price }} 元
               </div>
               <del
-                v-if="product.price"
+                v-if="singleProduct.price"
                 class="h6"
-              >原價 {{ product.origin_price }} 元</del>
+              >原價 {{ singleProduct.origin_price }} 元</del>
               <div
-                v-if="product.price"
+                v-if="singleProduct.price"
                 class="h4"
               >
-                現在只要 {{ product.price }} 元
+                現在只要 {{ singleProduct.price }} 元
               </div>
             </div>
             <select
-              v-model="product.num"
+              v-model="qty"
               name=""
               class="form-control mt-3"
             >
+              <option
+                value=""
+                disabled
+              >
+                -- 請選擇數量 --
+              </option>
               <option
                 v-for="num in 10"
                 :key="num"
                 :value="num"
               >
-                選購 {{ num }} {{ product.unit }}
+                選購 {{ num }} {{ singleProduct.unit }}
               </option>
             </select>
           </div>
           <div class="modal-footer">
             <div class="text-muted text-nowrap mr-3">
-              小計 <strong>{{ product.num * product.price }}</strong> 元
+              小計 <strong>{{ totalPrice }}</strong> 元
             </div>
             <button
               type="button"
               class="btn btn-primary"
-              @click="addtoCart(product.id, product.num)"
+              @click="addToCart(singleProduct.id, singleProduct.num)"
             >
               <i
-                v-if="product.id === status.loadingItem"
+                v-if="singleProduct.id === status.loadingItem"
                 class="fas fa-spinner fa-spin"
               ></i>
               加到購物車
@@ -184,7 +191,7 @@ export default {
     return {
       pageTitle: '模擬訂單',
       products: [],
-      product: {},
+      singleProduct: {},
       pagination: {},
       isLoading: false,
       qty: '',
@@ -193,13 +200,20 @@ export default {
       },
     };
   },
+  computed: {
+    totalPrice() {
+      return this.qty * this.singleProduct.price;
+    },
+  },
   watch: {
     qty() {
-
+      const qty = this.qty * 1;
+      this.singleProduct.num = qty;
     },
   },
   async created() {
     this.getProducts();
+    this.getCart();
   },
   methods: {
     getProducts(page = 1) {
@@ -215,9 +229,32 @@ export default {
       const api = `${process.env.VUE_APP_API_PATH}/api/${process.env.VUE_APP_CUSTOM_PATH}/product/${id}`;
       this.status.loadingItem = id;
       this.axios.get(api).then((res) => {
-        this.product = res.data.product;
+        this.singleProduct = res.data.product;
+        this.qty = '';
         $('#productModal').modal('show');
         this.status.loadingItem = '';
+      }).catch((res) => this.$bus.$emit('message:push', res.data.message, 'danger'));
+    },
+    addToCart(id, qty = 1) {
+      const api = `${process.env.VUE_APP_API_PATH}/api/${process.env.VUE_APP_CUSTOM_PATH}/cart`;
+      const cart = {
+        product_id: id,
+        qty,
+      };
+      this.status.loadingItem = id;
+      this.axios.post(api, { data: cart }).then((res) => {
+        console.log(res.data);
+        this.status.loadingItem = '';
+        this.getCart();
+        $('#productModal').modal('hide');
+      }).catch((res) => this.$bus.$emit('message:push', res.data.message, 'danger'));
+    },
+    getCart() {
+      const api = `${process.env.VUE_APP_API_PATH}/api/${process.env.VUE_APP_CUSTOM_PATH}/cart`;
+      this.isLoading = true;
+      this.axios.get(api).then((res) => {
+        console.log(res.data);
+        this.isLoading = false;
       }).catch((res) => this.$bus.$emit('message:push', res.data.message, 'danger'));
     },
   },
