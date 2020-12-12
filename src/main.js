@@ -2,6 +2,7 @@ import Vue from 'vue';
 import axios from 'axios';
 import VueAxios from 'vue-axios';
 import 'bootstrap';
+import VeeValidate from 'vee-validate';
 import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/vue-loading.css';
 
@@ -12,7 +13,7 @@ import currencyFilter from './filters/currency';
 import dateFilter from './filters/date';
 
 Vue.config.productionTip = false;
-Vue.use(VueAxios, axios);
+Vue.use(VueAxios, axios, VeeValidate);
 
 Vue.component('Loading', Loading);
 Vue.filter('currency', currencyFilter);
