@@ -213,7 +213,6 @@ export default {
   },
   async created() {
     this.getProducts();
-    this.getCart();
   },
   methods: {
     getProducts(page = 1) {
@@ -243,18 +242,9 @@ export default {
       };
       this.status.loadingItem = id;
       this.axios.post(api, { data: cart }).then((res) => {
-        console.log(res.data);
+        this.$bus.$emit('message:push', res.data.message, 'success');
         this.status.loadingItem = '';
-        this.getCart();
         $('#productModal').modal('hide');
-      }).catch((res) => this.$bus.$emit('message:push', res.data.message, 'danger'));
-    },
-    getCart() {
-      const api = `${process.env.VUE_APP_API_PATH}/api/${process.env.VUE_APP_CUSTOM_PATH}/cart`;
-      this.isLoading = true;
-      this.axios.get(api).then((res) => {
-        console.log(res.data);
-        this.isLoading = false;
       }).catch((res) => this.$bus.$emit('message:push', res.data.message, 'danger'));
     },
   },
