@@ -1,11 +1,11 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import Home from '../views/Home.vue';
 import Login from '../views/Login.vue';
 import Dashboard from '../views/Dashboard.vue';
 import Products from '../views/Products.vue';
 import Orders from '../views/Orders.vue';
 import Coupons from '../views/Coupons.vue';
+import CustomerOrders from '../views/CustomerOrders.vue';
 
 Vue.use(VueRouter);
 
@@ -18,7 +18,7 @@ const routes = [
 
   {
     path: '/admin',
-    name: 'Dashboard',
+    name: 'adminDashboard',
     component: Dashboard,
     meta: { requiresAuth: true },
     children: [
@@ -46,10 +46,16 @@ const routes = [
   },
 
   {
-    path: '/home',
-    name: 'Home',
-    component: Home,
-    meta: { requiresAuth: true },
+    path: '/',
+    name: 'dashboard',
+    component: Dashboard,
+    children: [
+      {
+        path: 'customer-orders',
+        name: 'customer-orders',
+        component: CustomerOrders,
+      },
+    ],
   },
 
   {
