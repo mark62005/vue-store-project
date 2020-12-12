@@ -77,6 +77,7 @@
 
 <style lang="scss">
 .sidebar .nav-link.active {
-  color: #6f42c1;
+  color: #fff;
+  background-color: #6f42c1;
 }
 </style>
