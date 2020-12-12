@@ -3,6 +3,9 @@ import axios from 'axios';
 import VueAxios from 'vue-axios';
 import 'bootstrap';
 import VeeValidate from 'vee-validate';
+
+import VueI18n from 'vue-i18n';
+import validationMessages from 'vee-validate/dist/locale/zh_TW';
 import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/vue-loading.css';
 
@@ -13,13 +16,23 @@ import currencyFilter from './filters/currency';
 import dateFilter from './filters/date';
 
 Vue.config.productionTip = false;
-Vue.use(VueAxios, axios, VeeValidate);
+Vue.use(VueAxios, axios);
+
+Vue.use(VueI18n);
+const i18n = new VueI18n();
+i18n.locale = 'zhTW';
+Vue.use(VeeValidate, {
+  i18nRootKey: 'validations',
+  i18n,
+  dictionary: { zhTW: validationMessages },
+});
 
 Vue.component('Loading', Loading);
 Vue.filter('currency', currencyFilter);
 Vue.filter('date', dateFilter);
 
 new Vue({
+  i18n,
   router,
   async created() {
     const api = `${process.env.VUE_APP_API_PATH}/api/${process.env.VUE_APP_CUSTOM_PATH}/products`;
