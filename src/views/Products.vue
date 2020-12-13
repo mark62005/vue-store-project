@@ -136,6 +136,7 @@ export default {
         this.target = {
           title: '未命名',
           category: '未分類',
+          unit: '單位',
           origin_price: 0,
           price: 0,
         };
