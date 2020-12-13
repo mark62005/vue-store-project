@@ -12,8 +12,8 @@
           <button
             class="btn btn-primary"
             data-toggle="modal"
-            toggle-target="#adminProductModal"
-            @click="openCouponModal(true,tempCoupon)"
+            toggle-target="#updateCouponModal"
+            @click="openCouponModal(true,target)"
           >
             建立新的{{ pageTitle }}
           </button>
@@ -89,153 +89,12 @@
       :pagination="pagination"
       @change-page="getCoupons"
     />
-    <!-- Modal -->
-    <div
-      id="couponModal"
-      class="modal fade"
-      tabindex="-1"
-      role="dialog"
-      aria-labelledby="couponModalLabel"
-      aria-hidden="true"
-    >
-      <div
-        class="modal-dialog"
-        role="document"
-      >
-        <validation-observer v-slot="{ invalid }">
-          <div class="modal-content border-0">
-            <div class="modal-header">
-              <h5
-                id="couponModalLabel"
-                class="modal-title"
-              >
-                {{ type }}{{ pageTitle }}
-              </h5>
-              <button
-                type="button"
-                class="close"
-                data-dismiss="modal"
-                aria-label="Close"
-              >
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <!-- 標題 -->
-              <validation-provider
-                v-slot="{ errors, classes }"
-                rules="required|email"
-              >
-                <div class="form-group">
-                  <!-- 輸入框 -->
-                  <label for="title">標題</label>
-                  <input
-                    id="title"
-                    v-model.trim="tempCoupon.title"
-                    type="text"
-                    name="標題"
-                    class="form-control"
-                    :class="classes"
-                    placeholder="請輸入標題"
-                  >
-                  <!-- 錯誤訊息 -->
-                  <span class="invalid-feedback">{{ errors[0] }}</span>
-                </div>
-              </validation-provider>
-              <!-- 優惠碼 -->
-              <validation-provider
-                v-slot="{ errors, classes }"
-                rules="required"
-              >
-                <div class="form-group">
-                  <!-- 輸入框 -->
-                  <label for="coupon_code">優惠碼</label>
-                  <input
-                    id="coupon_code"
-                    v-model.trim="tempCoupon.coupon_code"
-                    type="text"
-                    name="優惠碼"
-                    class="form-control"
-                    :class="classes"
-                    placeholder="請輸入優惠碼"
-                  >
-                  <!-- 錯誤訊息 -->
-                  <span class="invalid-feedback">{{ errors[0] }}</span>
-                </div>
-              </validation-provider>
-              <!-- 到期日 -->
-              <validation-provider
-                v-slot="{ errors, classes }"
-                rules="required"
-              >
-                <div class="form-group">
-                  <!-- 輸入框 -->
-                  <label for="due_date">到期日</label>
-                  <input
-                    id="due_date"
-                    v-model="due_date"
-                    type="date"
-                    name="到期日"
-                    class="form-control"
-                    :class="classes"
-                    placeholder="請輸入到期日"
-                  >
-                  <!-- 錯誤訊息 -->
-                  <span class="invalid-feedback">{{ errors[0] }}</span>
-                </div>
-              </validation-provider>
-              <!-- 折扣百分比 -->
-              <div class="form-group">
-                <label for="price">折扣百分比</label>
-                <input
-                  id="price"
-                  v-model="tempCoupon.percent"
-                  type="number"
-                  class="form-control"
-                  placeholder="請輸入折扣百分比"
-                >
-              </div>
-              <!-- 是否啟用 -->
-              <div class="form-group">
-                <div class="form-check">
-                  <input
-                    id="is_enabled"
-                    v-model="tempCoupon.is_enabled"
-                    class="form-check-input"
-                    type="checkbox"
-                    :true-value="1"
-                    :false-value="0"
-                  >
-                  <label
-                    class="form-check-label"
-                    for="is_enabled"
-                  >
-                    是否啟用
-                  </label>
-                </div>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                data-dismiss="modal"
-              >
-                Close
-              </button>
-              <button
-                type="button"
-                class="btn btn-primary"
-                :disabled="invalid"
-                @click="updateCoupon"
-              >
-                更新優惠券
-              </button>
-            </div>
-          </div>
-        </validation-observer>
-      </div>
-    </div>
+    <UpdateModal
+      :item="target"
+      :is-new="isNew"
+      :page-title="pageTitle"
+      @get-items="getCoupons"
+    />
     <DelModal
       :item="target"
       :page-title="pageTitle"
@@ -247,6 +106,7 @@
 <script>
 import $ from 'jquery';
 import Pagination from '../components/Pagination.vue';
+import UpdateModal from '../components/UpdateCouponModal.vue';
 import DelModal from '../components/DelModal.vue';
 
 export default {
@@ -254,60 +114,37 @@ export default {
   components: {
     Pagination,
     DelModal,
+    UpdateModal,
   },
   data() {
     return {
       pageTitle: '優惠劵',
       coupons: [],
-      tempCoupon: {
-        title: '',
-        is_enabled: 0,
-        percent: 100,
-        due_date: 0,
-        code: '',
-      },
       target: {},
-      due_date: new Date(),
       isNew: false,
       isLoading: false,
       pagination: {},
     };
-  },
-  computed: {
-    api() {
-      if (this.isNew) return `${process.env.VUE_APP_API_PATH}/api/${process.env.VUE_APP_CUSTOM_PATH}/admin/coupon`;
-      return `${process.env.VUE_APP_API_PATH}/api/${process.env.VUE_APP_CUSTOM_PATH}/admin/coupon/${this.tempCoupon.id}`;
-    },
-    httpMethod() {
-      if (this.isNew) return 'post';
-      return 'put';
-    },
-    type() {
-      if (this.isNew) return '新增';
-      return '編輯';
-    },
-  },
-  watch: {
-    due_date() {
-      const timestamp = Math.floor(new Date(this.due_date) / 1000);
-      this.tempCoupon.due_date = timestamp;
-    },
   },
   created() {
     this.getCoupons();
   },
   methods: {
     openCouponModal(isNew, id) {
-      const target = this.coupons.find((item) => item.id === id);
-      $('#couponModal').modal('show');
+      $('#updateCouponModal').modal('show');
       if (isNew) {
         this.isNew = true;
-        this.tempCoupon = {};
+        this.target = {
+          title: '',
+          is_enabled: 0,
+          percent: 100,
+          due_date: '0',
+          code: '',
+        };
       } else {
+        const target = this.coupons.find((item) => item.id === id);
         this.isNew = false;
-        this.tempCoupon = { ...target };
-        const dateAndTime = new Date(this.tempCoupon.due_date * 1000).toISOString().split('T');
-        this.due_date = { ...dateAndTime[0] };
+        this.target = { ...target };
       }
     },
     getCoupons(page = 1) {
@@ -317,22 +154,6 @@ export default {
         this.coupons = res.data.coupons;
       }).catch((res) => this.$bus.$emit('message:push', res.data.message, 'danger'));
       this.isLoading = false;
-    },
-    updateCoupon() {
-      if (this.isNew) {
-        this.$http[this.httpMethod](this.api, { data: this.tempCoupon }).then((res) => {
-          console.log(res, this.tempCoupon);
-          $('#couponModal').modal('hide');
-          this.getCoupons();
-        });
-      } else {
-        this.due_date = new Date(this.tempCoupon.due_date * 1000);
-        this.$http[this.httpMethod](this.api, { data: this.tempCoupon }).then((res) => {
-          $('#couponModal').modal('hide');
-          this.getCoupons();
-          this.$bus.$emit('message:push', res.data.message, 'success');
-        }).catch((res) => this.$bus.$emit('message:push', res.data.message, 'danger'));
-      }
     },
     openDelModal(id) {
       const target = this.coupons.find((item) => item.id === id);

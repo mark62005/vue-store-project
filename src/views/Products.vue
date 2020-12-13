@@ -98,7 +98,7 @@
 import $ from 'jquery';
 import DelModal from '../components/DelModal.vue';
 import Pagination from '../components/Pagination.vue';
-import UpdateModal from '../components/updateProductModal.vue';
+import UpdateModal from '../components/UpdateProductModal.vue';
 
 export default {
   name: 'Products',

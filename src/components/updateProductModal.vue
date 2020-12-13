@@ -292,15 +292,11 @@ export default {
       if (this.isNew) return '新增';
       return '編輯';
     },
-    itemType() {
-      if (this.pageTitle === '產品') return 'product';
-      return 'coupon';
-    },
     api() {
       const API_PATH = process.env.VUE_APP_API_PATH;
       const CUSTOM_PATH = process.env.VUE_APP_CUSTOM_PATH;
-      if (this.isNew) return `${API_PATH}/api/${CUSTOM_PATH}/admin/${this.itemType}`;
-      return `${API_PATH}/api/${CUSTOM_PATH}/admin/${this.itemType}/${this.item.id}`;
+      if (this.isNew) return `${API_PATH}/api/${CUSTOM_PATH}/admin/product`;
+      return `${API_PATH}/api/${CUSTOM_PATH}/admin/product/${this.item.id}`;
     },
     httpMethod() {
       if (this.isNew) return 'post';
