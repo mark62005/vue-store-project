@@ -1,7 +1,7 @@
 <template>
   <div>
     <div
-      id="delProductModal"
+      id="delModal"
       class="modal fade"
       tabindex="-1"
       role="dialog"
@@ -18,7 +18,7 @@
               id="delModalLabel"
               class="modal-title"
             >
-              <span>刪除產品</span>
+              <span>刪除{{ pageTitle }}</span>
             </h5>
             <button
               type="button"
@@ -30,7 +30,7 @@
             </button>
           </div>
           <div class="modal-body">
-            是否刪除 <strong class="text-danger">{{ product.title }}</strong> 商品(刪除後將無法恢復)。
+            是否刪除 <strong class="text-danger">{{ item.title }}</strong> 商品(刪除後將無法恢復)。
           </div>
           <div class="modal-footer">
             <button
@@ -43,7 +43,7 @@
             <button
               type="button"
               class="btn btn-danger"
-              @click="delProduct(product.id)"
+              @click="delProduct(item.id)"
             >
               確認刪除
             </button>
@@ -58,23 +58,36 @@
 import $ from 'jquery';
 
 export default {
-  name: 'DelProductModal',
+  name: 'DelModal',
   props: {
-    product: {
+    item: {
       type: Object,
       required: true,
+    },
+    pageTitle: {
+      type: String,
+      required: true,
+    },
+  },
+  computed: {
+    api() {
+      const API_PATH = process.env.VUE_APP_API_PATH;
+      const CUSTOM_PATH = process.env.VUE_APP_CUSTOM_PATH;
+      if (this.pageTitle === '產品') return `${API_PATH}/api/${CUSTOM_PATH}/admin/product`;
+      return `${API_PATH}/api/${CUSTOM_PATH}/admin/coupon`;
     },
   },
   methods: {
     delProduct(id) {
-      const api = `${process.env.VUE_APP_API_PATH}/api/${process.env.VUE_APP_CUSTOM_PATH}/admin/product/${id}`;
+      const api = `${this.api}/${id}`;
+      console.log(api);
       this.axios.delete(api)
         .then((res) => {
-          this.$emit('get-products');
+          this.$emit('get-items');
           this.$bus.$emit('message:push', res.data.message, 'success');
         })
         .catch((res) => this.$bus.$emit('message:push', res.data.message, 'danger'));
-      $('#delProductModal').modal('hide');
+      $('#delModal').modal('hide');
     },
   },
 };

@@ -70,7 +70,7 @@
             <button
               class="btn btn-outline-danger btn-sm"
               data-toggle="modal"
-              toggle-target="#delCouponModal"
+              toggle-target="#delModal"
               @click="openDelModal(coupon.id)"
             >
               刪除
@@ -80,7 +80,7 @@
       </tbody>
     </table>
     <div
-      v-if="coupons === []"
+      v-if="coupons == []"
       class="h6"
     >
       暫時未有優惠劵
@@ -236,69 +236,24 @@
         </validation-observer>
       </div>
     </div>
-    <!-- delModal -->
-    <div
-      id="delCouponModal"
-      class="modal fade"
-      tabindex="-1"
-      role="dialog"
-      aria-labelledby="delModalLabel"
-      aria-hidden="true"
-    >
-      <div
-        class="modal-dialog"
-        role="document"
-      >
-        <div class="modal-content border-0">
-          <div class="modal-header bg-danger text-white">
-            <h5
-              id="delModalLabel"
-              class="modal-title"
-            >
-              <span>刪除產品</span>
-            </h5>
-            <button
-              type="button"
-              class="close text-white"
-              data-dismiss="modal"
-              aria-label="Close"
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            是否刪除 <strong class="text-danger">{{ tempCoupon.title }}</strong> 優惠劵(刪除後將無法恢復)。
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-outline-secondary"
-              data-dismiss="modal"
-            >
-              取消
-            </button>
-            <button
-              type="button"
-              class="btn btn-danger"
-              @click="delCoupon(tempCoupon.id)"
-            >
-              確認刪除
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <DelModal
+      :item="target"
+      :page-title="pageTitle"
+      @get-items="getCoupons"
+    />
   </div>
 </template>
 
 <script>
 import $ from 'jquery';
 import Pagination from '../components/Pagination.vue';
+import DelModal from '../components/DelModal.vue';
 
 export default {
   name: 'Coupons',
   components: {
     Pagination,
+    DelModal,
   },
   data() {
     return {
@@ -311,6 +266,7 @@ export default {
         due_date: 0,
         code: '',
       },
+      target: {},
       due_date: new Date(),
       isNew: false,
       isLoading: false,
@@ -380,15 +336,15 @@ export default {
     },
     openDelModal(id) {
       const target = this.coupons.find((item) => item.id === id);
-      this.tempCoupon = { ...target };
-      $('#delCouponModal').modal('show');
+      this.target = { ...target };
+      $('#delModal').modal('show');
     },
     delCoupon(id) {
       const api = `${process.env.VUE_APP_API_PATH}/api/${process.env.VUE_APP_CUSTOM_PATH}/admin/coupon/${id}`;
       this.axios.delete(api)
         .then((res) => this.$bus.$emit('message:push', res.data.message, 'success'))
         .catch((res) => this.$bus.$emit('message:push', res.data.message, 'danger'));
-      $('#delCouponModal').modal('hide');
+      $('#delModal').modal('hide');
     },
   },
 };

@@ -5,7 +5,7 @@
   >
     <Loading :active.sync="isLoading" />
     <div class="container d-flex justify-content-between mt-2">
-      <h1 class="h2 mb-0">{{ pageTitle }}</h1>
+      <h1 class="h2 mb-0">{{ pageTitle.first }}{{ pageTitle.title2 }}</h1>
       <div class="btn-toolbar mb-2 mb-md-0">
         <div class="btn-group mr-2">
           <button
@@ -67,7 +67,7 @@
             <button
               class="btn btn-outline-danger btn-sm"
               data-toggle="modal"
-              toggle-target="#delProductModal"
+              toggle-target="#delModal"
               @click="openDelModal(product.id)"
             >
               刪除
@@ -85,9 +85,10 @@
       :is-new="isNew"
       @get-products="getProducts"
     />
-    <DelProductModal
-      :product="target"
-      @get-products="getProducts"
+    <DelModal
+      :item="target"
+      :page-title="pageTitle.first"
+      @get-items="getProducts"
     />
   </div>
 </template>
@@ -95,19 +96,22 @@
 <script>
 import $ from 'jquery';
 import AdminProductModal from '../components/AdminProductModal.vue';
-import DelProductModal from '../components/DelProductModal.vue';
+import DelModal from '../components/DelModal.vue';
 import Pagination from '../components/Pagination.vue';
 
 export default {
   name: 'Products',
   components: {
     AdminProductModal,
-    DelProductModal,
+    DelModal,
     Pagination,
   },
   data() {
     return {
-      pageTitle: '產品列表',
+      pageTitle: {
+        first: '產品',
+        second: '列表',
+      },
       products: [],
       target: {},
       isNew: false,
@@ -148,7 +152,7 @@ export default {
     openDelModal(id) {
       const target = this.products.find((item) => item.id === id);
       this.target = { ...target };
-      $('#delProductModal').modal('show');
+      $('#delModal').modal('show');
     },
   },
 };
