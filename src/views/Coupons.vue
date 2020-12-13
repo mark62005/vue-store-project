@@ -102,99 +102,138 @@
         class="modal-dialog"
         role="document"
       >
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5
-              id="couponModalLabel"
-              class="modal-title"
-            >
-              {{ type }}{{ pageTitle }}
-            </h5>
-            <button
-              type="button"
-              class="close"
-              data-dismiss="modal"
-              aria-label="Close"
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <div class="form-group">
-              <label for="title">標題</label>
-              <input
-                id="title"
-                v-model="tempCoupon.title"
-                type="text"
-                class="form-control"
-                placeholder="請輸入標題"
+        <validation-observer v-slot="{ invalid }">
+          <div class="modal-content border-0">
+            <div class="modal-header">
+              <h5
+                id="couponModalLabel"
+                class="modal-title"
               >
-            </div>
-            <div class="form-group">
-              <label for="coupon_code">優惠碼</label>
-              <input
-                id="coupon_code"
-                v-model="tempCoupon.code"
-                type="text"
-                class="form-control"
-                placeholder="請輸入優惠碼"
+                {{ type }}{{ pageTitle }}
+              </h5>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
               >
+                <span aria-hidden="true">&times;</span>
+              </button>
             </div>
-            <div class="form-group">
-              <label for="due_date">到期日</label>
-              <input
-                id="due_date"
-                v-model="due_date"
-                type="date"
-                class="form-control"
+            <div class="modal-body">
+              <!-- 標題 -->
+              <validation-provider
+                v-slot="{ errors, classes }"
+                rules="required|email"
               >
-            </div>
-            <div class="form-group">
-              <label for="price">折扣百分比</label>
-              <input
-                id="price"
-                v-model="tempCoupon.percent"
-                type="number"
-                class="form-control"
-                placeholder="請輸入折扣百分比"
+                <div class="form-group">
+                  <!-- 輸入框 -->
+                  <label for="title">標題</label>
+                  <input
+                    id="title"
+                    v-model.trim="tempCoupon.title"
+                    type="text"
+                    name="標題"
+                    class="form-control"
+                    :class="classes"
+                    placeholder="請輸入標題"
+                  >
+                  <!-- 錯誤訊息 -->
+                  <span class="invalid-feedback">{{ errors[0] }}</span>
+                </div>
+              </validation-provider>
+              <!-- 優惠碼 -->
+              <validation-provider
+                v-slot="{ errors, classes }"
+                rules="required"
               >
-            </div>
-            <div class="form-group">
-              <div class="form-check">
+                <div class="form-group">
+                  <!-- 輸入框 -->
+                  <label for="coupon_code">優惠碼</label>
+                  <input
+                    id="coupon_code"
+                    v-model.trim="tempCoupon.coupon_code"
+                    type="text"
+                    name="優惠碼"
+                    class="form-control"
+                    :class="classes"
+                    placeholder="請輸入優惠碼"
+                  >
+                  <!-- 錯誤訊息 -->
+                  <span class="invalid-feedback">{{ errors[0] }}</span>
+                </div>
+              </validation-provider>
+              <!-- 到期日 -->
+              <validation-provider
+                v-slot="{ errors, classes }"
+                rules="required"
+              >
+                <div class="form-group">
+                  <!-- 輸入框 -->
+                  <label for="due_date">到期日</label>
+                  <input
+                    id="due_date"
+                    v-model="due_date"
+                    type="date"
+                    name="到期日"
+                    class="form-control"
+                    :class="classes"
+                    placeholder="請輸入到期日"
+                  >
+                  <!-- 錯誤訊息 -->
+                  <span class="invalid-feedback">{{ errors[0] }}</span>
+                </div>
+              </validation-provider>
+              <!-- 折扣百分比 -->
+              <div class="form-group">
+                <label for="price">折扣百分比</label>
                 <input
-                  id="is_enabled"
-                  v-model="tempCoupon.is_enabled"
-                  class="form-check-input"
-                  type="checkbox"
-                  :true-value="1"
-                  :false-value="0"
+                  id="price"
+                  v-model="tempCoupon.percent"
+                  type="number"
+                  class="form-control"
+                  placeholder="請輸入折扣百分比"
                 >
-                <label
-                  class="form-check-label"
-                  for="is_enabled"
-                >
-                  是否啟用
-                </label>
+              </div>
+              <!-- 是否啟用 -->
+              <div class="form-group">
+                <div class="form-check">
+                  <input
+                    id="is_enabled"
+                    v-model="tempCoupon.is_enabled"
+                    class="form-check-input"
+                    type="checkbox"
+                    :true-value="1"
+                    :false-value="0"
+                  >
+                  <label
+                    class="form-check-label"
+                    for="is_enabled"
+                  >
+                    是否啟用
+                  </label>
+                </div>
               </div>
             </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-dismiss="modal"
+              >
+                Close
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                :disabled="invalid"
+                @click="updateCoupon"
+              >
+                更新優惠券
+              </button>
+            </div>
           </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-dismiss="modal"
-            >
-              Close
-            </button>
-            <button
-              type="button"
-              class="btn btn-primary"
-              @click="updateCoupon"
-            >
-              更新優惠券
-            </button>
-          </div>
-        </div>
+        </validation-observer>
       </div>
     </div>
     <!-- delModal -->
