@@ -6,7 +6,7 @@ import Products from '../views/Products.vue';
 import Orders from '../views/Orders.vue';
 import Coupons from '../views/Coupons.vue';
 import CustomerOrders from '../views/CustomerOrders.vue';
-import Carts from '../views/Carts.vue';
+import Cart from '../views/Cart.vue';
 
 Vue.use(VueRouter);
 
@@ -58,9 +58,9 @@ const routes = [
       },
 
       {
-        path: 'carts',
-        name: 'carts',
-        component: Carts,
+        path: 'cart',
+        name: 'cart',
+        component: Cart,
       },
     ],
   },

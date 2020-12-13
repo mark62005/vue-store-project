@@ -63,10 +63,10 @@
           </li>
           <li class="nav-item">
             <router-link
-              to="/carts"
+              to="/cart"
               class="nav-link"
             >
-              <i class="fas fa-shopping-cart"></i> 模擬訂單
+              <i class="fas fa-shopping-cart"></i> 購物車
             </router-link>
           </li>
         </ul>
