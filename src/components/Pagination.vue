@@ -2,7 +2,7 @@
   <div>
     <nav aria-label="Page navigation example">
       <ul
-        v-if="pagination.page"
+        v-if="pagination.page == 0"
         class="pagination"
       >
         <li
@@ -19,17 +19,12 @@
             <span class="sr-only">Previous</span>
           </a>
         </li>
-        <li
-          v-for="page in pagination.total_pages"
-          :key="page"
-          class="page-item"
-          :class="{ active: page === pagination.current_page }"
-        >
+        <li class="page-item active">
           <a
             class="page-link"
             href="#"
-            @click.prevent="changePage(page)"
-          >{{ page }}</a>
+            @click.prevent="changePage(1)"
+          >1</a>
         </li>
         <li
           class="page-item"
@@ -64,12 +59,17 @@
             <span class="sr-only">Previous</span>
           </a>
         </li>
-        <li class="page-item active">
+        <li
+          v-for="page in pagination.total_pages"
+          :key="page"
+          class="page-item"
+          :class="{ active: page === pagination.current_page }"
+        >
           <a
             class="page-link"
             href="#"
-            @click.prevent="changePage(1)"
-          >1</a>
+            @click.prevent="changePage(page)"
+          >{{ page }}</a>
         </li>
         <li
           class="page-item"
