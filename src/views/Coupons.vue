@@ -339,13 +339,6 @@ export default {
       this.target = { ...target };
       $('#delModal').modal('show');
     },
-    delCoupon(id) {
-      const api = `${process.env.VUE_APP_API_PATH}/api/${process.env.VUE_APP_CUSTOM_PATH}/admin/coupon/${id}`;
-      this.axios.delete(api)
-        .then((res) => this.$bus.$emit('message:push', res.data.message, 'success'))
-        .catch((res) => this.$bus.$emit('message:push', res.data.message, 'danger'));
-      $('#delModal').modal('hide');
-    },
   },
 };
 </script>

@@ -5,13 +5,13 @@
   >
     <Loading :active.sync="isLoading" />
     <div class="container d-flex justify-content-between mt-2">
-      <h1 class="h2 mb-0">{{ pageTitle.first }}{{ pageTitle.title2 }}</h1>
+      <h1 class="h2 mb-0">{{ pageTitle.first }}{{ pageTitle.second }}</h1>
       <div class="btn-toolbar mb-2 mb-md-0">
         <div class="btn-group mr-2">
           <button
             class="btn btn-primary"
             data-toggle="modal"
-            toggle-target="#adminProductModal"
+            toggle-target="#updateProductModal"
             @click="openUpdateModal(true,target)"
           >
             建立新的產品
@@ -80,10 +80,11 @@
       :pagination="pagination"
       @change-page="getProducts"
     />
-    <AdminProductModal
-      :temp-product="target"
+    <UpdateModal
+      :page-title="pageTitle.first"
+      :item="target"
       :is-new="isNew"
-      @get-products="getProducts"
+      @get-items="getProducts"
     />
     <DelModal
       :item="target"
@@ -95,14 +96,14 @@
 
 <script>
 import $ from 'jquery';
-import AdminProductModal from '../components/AdminProductModal.vue';
 import DelModal from '../components/DelModal.vue';
 import Pagination from '../components/Pagination.vue';
+import UpdateModal from '../components/updateProductModal.vue';
 
 export default {
   name: 'Products',
   components: {
-    AdminProductModal,
+    UpdateModal,
     DelModal,
     Pagination,
   },
@@ -127,14 +128,14 @@ export default {
       const api = `${process.env.VUE_APP_API_PATH}/api/${process.env.VUE_APP_CUSTOM_PATH}/admin/products?page=${page}`;
       this.isLoading = true;
       this.axios.get(api).then((res) => {
-        this.isLoading = false;
         this.products = res.data.products;
         this.pagination = res.data.pagination;
       }).catch((res) => this.$bus.$emit('message:push', res.data.message, 'danger'));
+      this.isLoading = false;
     },
     openUpdateModal(isNew, id) {
       const target = this.products.find((item) => item.id === id);
-      $('#adminProductModal').modal('show');
+      $('#updateProductModal').modal('show');
       if (isNew) {
         this.isNew = true;
         this.target = {

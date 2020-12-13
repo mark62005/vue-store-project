@@ -1,10 +1,10 @@
 <template>
   <div
-    id="adminProductModal"
+    id="updateProductModal"
     class="modal fade"
     tabindex="-1"
     role="dialog"
-    aria-labelledby="adminProductModalLabel"
+    aria-labelledby="updateModalLabel"
     aria-hidden="true"
   >
     <div
@@ -15,10 +15,10 @@
         <div class="modal-content border-0">
           <div class="modal-header bg-dark text-white">
             <h5
-              id="adminProductModalLabel"
+              id="updateModalLabel"
               class="modal-title"
             >
-              {{ modalTitle }}產品
+              {{ modalTitle }}{{ pageTitle }}
             </h5>
             <button
               type="button"
@@ -29,6 +29,7 @@
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
+
           <div class="modal-body">
             <div class="row">
               <div class="col-sm-4">
@@ -37,7 +38,7 @@
                   <label for="image">輸入圖片網址</label>
                   <input
                     id="image"
-                    v-model.trim="tempProduct.imageUrl"
+                    v-model.trim="item.imageUrl"
                     type="text"
                     class="form-control"
                     placeholder="請輸入圖片連結"
@@ -63,8 +64,8 @@
                 <img
                   img="https://images.unsplash.com/photo-1483985988355-763728e1935b?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=828346ed697837ce808cae68d3ddc3cf&auto=format&fit=crop&w=1350&q=80"
                   class="img-fluid"
-                  :src="tempProduct.imageUrl"
-                  :alt="tempProduct.title"
+                  :src="item.imageUrl"
+                  :alt="item.title"
                 >
               </div>
               <div class="col-sm-8">
@@ -78,7 +79,7 @@
                     <label for="title">標題</label>
                     <input
                       id="title"
-                      v-model.trim="tempProduct.title"
+                      v-model.trim="item.title"
                       type="text"
                       name="標題"
                       class="form-control"
@@ -102,7 +103,7 @@
                         <label for="category">分類</label>
                         <input
                           id="category"
-                          v-model.trim="tempProduct.category"
+                          v-model.trim="item.category"
                           type="text"
                           name="分類"
                           class="form-control"
@@ -125,7 +126,7 @@
                         <label for="unit">單位</label>
                         <input
                           id="unit"
-                          v-model.trim="tempProduct.unit"
+                          v-model.trim="item.unit"
                           type="unit"
                           name="單位"
                           class="form-control"
@@ -151,7 +152,7 @@
                         <label for="origin_price">原價</label>
                         <input
                           id="origin_price"
-                          v-model.number="tempProduct.origin_price"
+                          v-model.number="item.origin_price"
                           type="number"
                           min="0"
                           name="原價"
@@ -175,7 +176,7 @@
                         <label for="price">售價</label>
                         <input
                           id="price"
-                          v-model.number="tempProduct.price"
+                          v-model.number="item.price"
                           type="number"
                           min="0"
                           name="售價"
@@ -197,7 +198,7 @@
                   <label for="description">產品描述</label>
                   <textarea
                     id="description"
-                    v-model.trim="tempProduct.description"
+                    v-model.trim="item.description"
                     type="text"
                     class="form-control"
                     placeholder="請輸入產品描述"
@@ -208,7 +209,7 @@
                   <label for="content">說明內容</label>
                   <textarea
                     id="content"
-                    v-model.trim="tempProduct.content"
+                    v-model.trim="item.content"
                     type="text"
                     class="form-control"
                     placeholder="請輸入產品說明內容"
@@ -219,7 +220,7 @@
                   <div class="form-check">
                     <input
                       id="is_enabled"
-                      v-model="tempProduct.is_enabled"
+                      v-model="item.is_enabled"
                       true-value="1"
                       false-value="0"
                       class="form-check-input"
@@ -236,6 +237,7 @@
               </div>
             </div>
           </div>
+
           <div class="modal-footer">
             <button
               type="button"
@@ -248,7 +250,7 @@
               type="button"
               class="btn btn-primary"
               :disabled="invalid"
-              @click="updateProduct"
+              @click="updateItem"
             >
               確認
             </button>
@@ -263,14 +265,18 @@
 import $ from 'jquery';
 
 export default {
-  name: 'AdminProductModal',
+  name: 'UpdateModal',
   props: {
-    tempProduct: {
+    item: {
       type: Object,
       required: true,
     },
     isNew: {
       type: Boolean,
+      required: true,
+    },
+    pageTitle: {
+      type: String,
       required: true,
     },
   },
@@ -286,9 +292,15 @@ export default {
       if (this.isNew) return '新增';
       return '編輯';
     },
+    itemType() {
+      if (this.pageTitle === '產品') return 'product';
+      return 'coupon';
+    },
     api() {
-      if (this.isNew) return `${process.env.VUE_APP_API_PATH}/api/${process.env.VUE_APP_CUSTOM_PATH}/admin/product`;
-      return `${process.env.VUE_APP_API_PATH}/api/${process.env.VUE_APP_CUSTOM_PATH}/admin/product/${this.tempProduct.id}`;
+      const API_PATH = process.env.VUE_APP_API_PATH;
+      const CUSTOM_PATH = process.env.VUE_APP_CUSTOM_PATH;
+      if (this.isNew) return `${API_PATH}/api/${CUSTOM_PATH}/admin/${this.itemType}`;
+      return `${API_PATH}/api/${CUSTOM_PATH}/admin/${this.itemType}/${this.item.id}`;
     },
     httpMethod() {
       if (this.isNew) return 'post';
@@ -296,10 +308,10 @@ export default {
     },
   },
   methods: {
-    updateProduct() {
-      this.axios[this.httpMethod](this.api, { data: this.tempProduct }).then((res) => {
-        $('#adminProductModal').modal('hide');
-        this.$emit('get-products');
+    updateItem() {
+      this.axios[this.httpMethod](this.api, { data: this.item }).then((res) => {
+        $('#updateProductModal').modal('hide');
+        this.$emit('get-items');
         this.$bus.$emit('message:push', res.data.message, 'success');
       }).catch((res) => this.$bus.$emit('message:push', res.data.message, 'danger'));
     },
@@ -314,7 +326,7 @@ export default {
           'Content-Type': 'multipart/form-data',
         },
       }).then((res) => {
-        this.$set(this.tempProduct, 'imageUrl', res.data.imageUrl);
+        this.$set(this.item, 'imageUrl', res.data.imageUrl);
         this.$bus.$emit('message:push', res.data.message, 'success');
       })
         .catch((res) => this.$bus.$emit('message:push', res.data.message, 'danger'));
